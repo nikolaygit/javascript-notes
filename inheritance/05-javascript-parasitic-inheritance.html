@@ -1,0 +1,65 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Parasitic Inheritance</title>
+</head>
+<body>
+<script type="text/javascript">
+  "use strict";
+
+  /* ----------------------------------------------------------
+   * 5) Parasitic Inheritance
+   * - create a function that does the inheritance, augments and returns the object.
+   */
+
+  function createAnother(original) {
+    var clone = Object.create(original); //create a new object by calling a function
+    clone.sayHi = function() { //augment the object in some way
+      return 'hi';
+    };
+    return clone; //return the object
+  }
+
+  var person = {
+    name: 'Nikolay',
+    friends: ['Tim', 'Tom']
+  };
+
+  var instance1 = createAnother(person);
+  instance1.name = 'Georg';
+  instance1.friends.push('John');
+
+  var instance2 = createAnother(person);
+  instance2.name = 'Linda';
+  instance2.friends.push('Veronika');
+
+  console.log('instance1 instanceof Object = ', instance1 instanceof Object); // true
+  try {
+    console.log('instance1 instanceof person = ', instance1 instanceof person); // error - person is not a function
+  }
+  catch (err) {
+    console.log('err: ', err);
+  }
+
+  console.log('Object.prototype.isPrototypeOf(instance1) = ', Object.prototype.isPrototypeOf(instance1)); // true
+  console.log('person.isPrototypeOf(instance1) = ', person.isPrototypeOf(instance1)); // true
+
+  // as expected
+  console.log('instance1.name = ', instance1.name); // Georg
+  console.log('instance2.name = ', instance2.name); // Linda
+  console.log('instance1.sayHi() = ', instance1.sayHi()); // hi
+  console.log('instance2.sayHi() = ', instance2.sayHi()); // hi
+
+
+  /* ----------------------------------------------------------
+   * ISSUES
+   */
+
+  // reference values are shared (possible ISSUE)
+  console.log('instance1.friends = ', instance1.friends); //
+  console.log('instance2.friends = ', instance2.friends); //
+
+</script>
+</body>
+</html>

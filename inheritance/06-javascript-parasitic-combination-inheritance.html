@@ -1,0 +1,79 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Parasitic Combination Inheritance</title>
+</head>
+<body>
+<script type="text/javascript">
+  "use strict";
+
+  /* ----------------------------------------------------------
+   * 6) Parasitic Combination Inheritance
+   * fixes the twice call of the SuperType
+   *
+   */
+
+  function inheritPrototype(subType, superType) {
+    var prototype = Object.create(superType.prototype); //create object
+    prototype.constructor = subType; //augment object
+    subType.prototype = prototype; //assign object
+  }
+
+  function SuperType(name) {
+    this.name = name;
+    this.colors = ['red', 'blue', 'green'];
+    console.log('SuperType called.');
+  }
+
+  SuperType.prototype.getName = function() {
+    return this.name;
+  };
+
+  function SubType(name, age) {
+    // inherit properties
+    SuperType.call(this, name);
+
+    this.age = age;
+  }
+
+  // inherit methods
+  inheritPrototype(SubType, SuperType);
+
+  // new method
+  SubType.prototype.getAge = function() {
+    return this.age;
+  };
+
+  var instance1 = new SubType('Nikolay', 30);
+  instance1.colors.push('black');
+
+  var instance2 = new SubType('Tim', 26);
+
+  console.log('instance1 instanceof Object = ', instance1 instanceof Object); // true
+  console.log('instance1 instanceof SuperType = ', instance1 instanceof SuperType); // true
+  console.log('instance1 instanceof SubType = ', instance1 instanceof SubType); // true
+
+  console.log('Object.prototype.isPrototypeOf(instance1) = ', Object.prototype.isPrototypeOf(instance1)); // true
+  console.log('SuperType.prototype.isPrototypeOf(instance1) = ', SuperType.prototype.isPrototypeOf(instance1)); // true
+  console.log('SubType.prototype.isPrototypeOf(instance1) = ', SubType.prototype.isPrototypeOf(instance1)); // true
+
+  // as expected
+  console.log('instance1.getName() = ', instance1.getName()); // Nikolay
+  console.log('instance2.getName() = ', instance2.getName()); // Tim
+  console.log('instance1.getAge() = ', instance1.getAge()); // 30
+  console.log('instance2.getAge() = ', instance2.getAge()); // 26
+  console.log('instance1.colors = ', instance1.colors); // ["red", "blue", "green", "black"]
+  console.log('instance2.colors = ', instance2.colors); // ["red", "blue", "green"]
+
+  /* ----------------------------------------------------------
+   * ISSUES #1
+   *
+   * The SuperType constructor is called twice/thrice! See the !!! comments.
+   * the SubType prototype contains all of the instance properties of a SuperType object,
+   * only to have it overwritten when the SubType constructor executes.
+   */
+
+</script>
+</body>
+</html>
